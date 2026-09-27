@@ -88,6 +88,7 @@
   /* ---------------- start ---------------- */
   function init() {
     $("#testDate").value = new Date().toISOString().split("T")[0];
+    try { if (new URLSearchParams(location.search).get("from") === "deck") $("#backLink").classList.remove("hidden"); } catch (e) {}
     if (TEST) $("#testBadgeSlot").innerHTML = `<span class="test-badge">TEST TRIAL — not a candidate result</span>`;
     show(CONFIG.requirePassword ? "login" : "start");
   }

@@ -270,3 +270,7 @@ main.wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,4vw,44px) clamp(14px
   body{background:#fff;color:#000}.site-header,.skill-tabs,.no-print,.examiner-panel>summary{display:none!important}
   .panel,.card{box-shadow:none}.examiner-panel{border:0;padding:0}
 }
+
+/* back link, shown only when the test is opened from the Orbital Deck (?from=deck) */
+.back-link{margin-left:auto;margin-right:12px;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:800;text-decoration:none;background:rgba(255,255,255,.04)}
+.back-link:hover{background:rgba(255,255,255,.12)}
