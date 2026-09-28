@@ -27,10 +27,18 @@ const CONFIG = {
   rubricMax:    4          // productive rubric: 0-4 per criterion, 4 criteria -> /16
 };
 
-/* Reading raw score (out of 30) -> tier. Option B bands (19 Sep 2026) halved for the 30-item paper (27 Sep 2026):
-   0-6 / 7-13 / 14-20 / 21-27 / 28-30. Six items per level, so a secure B1 candidate (A1+A2 + ~4 of 6 B1) scores ~16. */
+/* Reading raw score (out of 30) -> tier. Option B bands (19 Sep 2026) halved for the
+   30-item paper (27 Sep 2026): 0-6 / 7-13 / 14-20 / 21-27 / 28-30. Six items per level,
+   so a secure B1 candidate (A1+A2 + ~4 of 6 B1) scores ~16.
+
+   28 Sep 2026 - course-to-CEFR scheme confirmed by Dr. Abir and applied here:
+     A1 = Elementary  .  A2 = Pre-intermediate  .  B1 = Intermediate
+     B2 = Upper-intermediate  .  C1 = Advanced
+   Tier 1 was "Pre-elementary / Elementary (A1->A2)"; with five course levels mapped to
+   five CEFR levels there is no Pre-elementary course, so the band is Elementary / A1 and
+   the A1/A2 split probe is retired. */
 const TIERS = {
-  1:{ name:"Pre-elementary / Elementary", cefr:"A1\u2192A2", anchor:"A1", min:0,  max:6,  cls:"level-elementary",         color:"#5b4bd6", probe:true },
+  1:{ name:"Elementary",                 cefr:"A1",        anchor:"A1", min:0,  max:6,  cls:"level-elementary",         color:"#5b4bd6" },
   2:{ name:"Pre-intermediate",            cefr:"A2",        anchor:"A2", min:7,  max:13, cls:"level-pre-intermediate",   color:"#c23b5c" },
   3:{ name:"Intermediate",                cefr:"B1",        anchor:"B1", min:14, max:20, cls:"level-intermediate",       color:"#b4540a" },
   4:{ name:"Upper-intermediate",          cefr:"B2",        anchor:"B2", min:21, max:27, cls:"level-upper-intermediate", color:"#1f6fa8" },
@@ -102,9 +110,8 @@ const BANK = {
       starter:"Hello everyone,\nMy name is ______. I am a ______."
     },
     speaking: {
-      source:"criteria of Speaking Placement Test - Pre-elementary / Elementary questions (all 10, verbatim)",
-      prompts:["What's your name?","Which country are you from? Where are you from?","What's your job?","What does your company produce or provide?","What time do you start work? Tell me about your typical day.","What do you do in your free time?","Tell me about your family, your home or your interests."],
-      probe:["When did you join the company?","What project are you working on at the moment?","When is your next holiday? Where are you going to go?"]
+      source:"criteria of Speaking Placement Test - Elementary questions (7 verbatim) + 3 written for A1 (28 Sep 2026). The three A2 prompts that were here (past simple, present continuous, going to) moved to Tier 2.",
+      prompts:["What's your name?","Which country are you from? Where are you from?","What's your job?","What does your company produce or provide?","What time do you start work? Tell me about your typical day.","What do you do in your free time?","Tell me about your family, your home or your interests.","Where do you work? Tell me about your office.","Who do you work with? Who is your manager?","How do you travel to work?"]
     }
   },
 
@@ -141,8 +148,8 @@ const BANK = {
       starter:"Dear Sir or Madam,\nI would like to book ______"
     },
     speaking: {
-      source:"NOT in the criteria document (it gives only the Pre-intermediate descriptor). v2 set, matches the descriptor: experiences, ambitions, reasons, a book or film - REVIEW",
-      prompts:["Tell me about your educational background.","Describe your current or most recent job.","What are your dreams and ambitions for the future?","Describe a memorable experience from your past.","Tell me about a book or film you enjoyed recently.","What are your hopes for your career?","Why did you choose your current field of work?"]
+      source:"A2 set (28 Sep 2026): the two prompts named in the A2 descriptor (educational background, present or most recent job), the three A2 prompts moved down from Tier 1, and three written for A2. The B1-pitched prompts that were here moved up to Tier 3.",
+      prompts:["Tell me about your educational background.","Describe your current or most recent job.","When did you join the company? How did you get the job?","What project are you working on at the moment?","When is your next holiday? Where are you going to go?","What are your main responsibilities?","Tell me about the people in your team.","What did you do at work last week?"]
     }
   },
 
@@ -178,8 +185,8 @@ const BANK = {
       starter:"Dear ______,\nI am writing to propose ______"
     },
     speaking: {
-      source:"criteria of Speaking Placement Test - Intermediate questions (verbatim)",
-      prompts:["Give a short presentation about your company. For example, its history, products and locations.","What have been some of the big changes at your company recently? What have been the results? What's your opinion on the changes?","How has technology changed your life in recent years, at work and at home? Do you think it's a good thing?"]
+      source:"B1 set (28 Sep 2026): the B1-pitched prompts moved down from Tier 2 - they match the B1 descriptor (experiences and events, dreams, hopes and ambitions, a book or film, reasons) - plus one written for B1.",
+      prompts:["What are your dreams and ambitions for the future?","Describe a memorable experience from your past.","Tell me about a book or film you enjoyed recently.","What are your hopes for your career?","Why did you choose your current field of work?","Describe a problem you had at work and how you dealt with it."]
     }
   },
 
@@ -216,8 +223,8 @@ const BANK = {
       starter:"Introduction\nThe purpose of this report is to ______"
     },
     speaking: {
-      source:"criteria of Speaking Placement Test - Upper-intermediate questions (verbatim)",
-      prompts:["How important are teams where you work? What are some ways to motivate a team?","How much do you deal with people from other countries? Give examples. Do different cultures do business in different ways?","Think of a problem you had to deal with recently. What happened? How did you solve it? Do you think you could have approached it differently?"]
+      source:"B2 set (28 Sep 2026): the criteria document's Intermediate questions, moved down from Tier 3 - they match the B2 descriptor (detailed descriptions, a viewpoint with advantages and disadvantages) - plus one written for B2.",
+      prompts:["Give a short presentation about your company. For example, its history, products and locations.","What have been some of the big changes at your company recently? What were the results, and what is your opinion of them?","How has technology changed your life in recent years, at work and at home? Do you think it's a good thing?","Remote and hybrid work: what are the advantages and disadvantages for a company like yours? Where do you stand?"]
     }
   },
 
@@ -251,8 +258,8 @@ const BANK = {
       starter:"Proposal: ______\nPurpose"
     },
     speaking: {
-      source:"criteria of Speaking Placement Test - Advanced: mix and match all of the above (Upper-intermediate + Intermediate questions)",
-      prompts:["How important are teams where you work? What are some ways to motivate a team?","How much do you deal with people from other countries? Give examples. Do different cultures do business in different ways?","Think of a problem you had to deal with recently. What happened? How did you solve it? Do you think you could have approached it differently?","Give a short presentation about your company. For example, its history, products and locations.","What have been some of the big changes at your company recently? What have been the results? What's your opinion on the changes?","How has technology changed your life in recent years, at work and at home? Do you think it's a good thing?"]
+      source:"C1 set (28 Sep 2026): the criteria document's Upper-intermediate questions, moved down from Tier 4 - they match the C1 descriptor (complex subjects, sub-themes, evaluation) - plus two written for C1. Prompt 5 requires a register shift, the C1 marker a fluent B2 most often misses. The old 'mix and match' set is retired.",
+      prompts:["How important are teams where you work? What are some ways to motivate a team that is underperforming?","How much do you deal with people from other countries? Give examples. Do different cultures do business in different ways?","Think of a problem you had to deal with recently. What happened? How did you solve it? Could you have approached it differently?","Analyse the main trends shaping your industry over the next few years. Which will matter most, and why?","Explain a technical or specialist part of your work to me as though I know nothing about your field."]
     }
   }
 };

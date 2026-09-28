@@ -476,7 +476,7 @@
      SPEAKING — live ElevenLabs examiner, adaptive
      The ladder is resolved HERE: the agent receives ready-made blocks
      (at level, stay, one up, one down) and only judges which block to use.
-     Tier 1: the "up" block is the A1/A2 split probe.
+     28 Sep 2026: the A1/A2 split probe is retired; Tier 1 uses the ordinary ladder.
      ===================================================================== */
   const numbered = arr => arr.map((q, i) => `${i + 1}) ${q}`).join("  ");
   function speakingBlocks(t) {
@@ -485,9 +485,9 @@
     const fresh = arr => arr.filter(q => !at.includes(q) && !stay.includes(q));   // never repeat a question
     return {
       at, stay,
-      up: t === 1 ? sp.probe : (t === MAX_T ? [] : fresh(BANK[up].speaking.prompts.slice(0, 3))),
+      up: t === MAX_T ? [] : fresh(BANK[up].speaking.prompts.slice(0, 3)),
       down: t === 1 ? [] : fresh(BANK[down].speaking.prompts.slice(0, 3)),
-      upName: t === 1 ? "A1/A2 split probe" : TIERS[up].name, downName: t === 1 ? "none" : TIERS[down].name
+      upName: t === MAX_T ? "none" : TIERS[up].name, downName: t === 1 ? "none" : TIERS[down].name
     };
   }
   function goSpeaking() {
@@ -694,7 +694,8 @@
     renderRubric("#writeRubric", WRITING_RUBRIC, "writing");
     renderRubric("#speakRubric", SPEAKING_RUBRIC, "speaking");
     $("#probeWrap").classList.toggle("hidden", !TIERS[S.prov.tier].probe);
-    $("#probeRule").textContent = "Probe questions: " + BANK[1].speaking.probe.join(" / ");
+    const _pr = (BANK[1].speaking.probe || []);
+    $("#probeRule").textContent = _pr.length ? "Probe questions: " + _pr.join(" / ") : "";
   }
   function askedLevel() {
     const lv = S.asked.map(q => q.level).filter(Boolean);
