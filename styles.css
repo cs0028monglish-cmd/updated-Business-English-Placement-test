@@ -274,3 +274,25 @@ main.wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,4vw,44px) clamp(14px
 /* back link, shown only when the test is opened from the Orbital Deck (?from=deck) */
 .back-link{margin-left:auto;margin-right:12px;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:800;text-decoration:none;background:rgba(255,255,255,.04)}
 .back-link:hover{background:rgba(255,255,255,.12)}
+
+/* ---------- v4 (10 Oct 2026): A1 passage, thank-you tips ---------- */
+#passageBox{margin:12px 0 18px}
+.passage{background:var(--paper-2);border:2px solid var(--line-2);border-radius:var(--r-sm);padding:16px 20px;text-align:left;color:var(--ink);font-size:1.08rem;line-height:1.65}
+.passage h4{margin:0 0 8px;color:var(--navy)}
+.passage p{margin:0 0 10px}
+.tips-box{text-align:left;background:var(--paper-2);border:2px solid var(--line);border-radius:var(--r);padding:18px 22px;margin:18px auto 6px;max-width:720px;color:var(--ink)}
+.tips-box h3{margin:0 0 10px;color:var(--navy)}
+.tips-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tips-list li{display:flex;gap:12px;align-items:flex-start;line-height:1.5}
+.tip-skill{flex:0 0 92px;font-weight:900;color:var(--navy-4);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+@media (max-width:520px){.tips-list li{flex-direction:column;gap:2px}.tip-skill{flex:none}}
+
+/* v4b: recorded speaking answers */
+.rec-q{background:#fff;border:2px solid var(--line);border-radius:var(--r-sm);padding:14px 16px;margin:0 0 12px;color:var(--ink)}
+.rec-head{display:flex;gap:10px;align-items:flex-start;font-weight:800;line-height:1.45}
+.rec-head .num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:.9rem}
+.rec-ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.rec-ctrl .record-btn{margin:0}
+.rec-status{font-weight:700;color:var(--ink-soft);font-size:.92rem}
+.rec-audio{width:100%;max-width:360px;height:36px}
+.rec-q .passage{margin-top:10px}

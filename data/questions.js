@@ -24,7 +24,7 @@ const CONFIG = {
   masteryBar:   60,        // listening block "secure" at >= 3/5
   maxReplays:   2,         // 1 play + 2 replays
   requirePassword: false,  // single-use exam-password gate (list kept in app.js)
-  rubricMax:    4          // productive rubric: 0-4 per criterion, 4 criteria -> /16
+  rubricMax:    5          // v4 productive rubric: 1-5 per criterion (speaking 5 criteria /25, writing 4 criteria /20)
 };
 
 /* Reading raw score (out of 30) -> tier. Option B bands (19 Sep 2026) halved for the
@@ -54,25 +54,32 @@ const CEFR_DESCRIPTORS = {
   C1:"I can present clear, detailed descriptions of complex subjects integrating sub-themes, developing particular points and rounding off with an appropriate conclusion."
 };
 
-/* PRODUCTIVE RUBRICS — each criterion is rated AGAINST THE TASK LEVEL.
-   0 = no evidence · 1 = clearly below level · 2 = borderline
-   3 = secure at level · 4 = above level.
-   Three-of-four rule (app.js): a skill is "below" when 3+ criteria are <=1,
-   "above" when 3+ criteria are 4. NOTE: this is the rubric proposed in the
-   CEFR Alignment Proposal and is still awaiting Dr. Abir's approval. */
-const BAND_WORDS = ["No evidence","Below level","Borderline","Secure at level","Above level"];
+/* PRODUCTIVE RUBRICS - v4 (10 Oct 2026), from the Academic Team PDF
+   "Business Result - Oral & Writing Placement Test", page 9.
+   Each criterion is scored 1-5 AGAINST THE LEVEL TESTED ("fluent A1 answers score 5 on an
+   A1 interview"). 5 strong · 4 between · 3 adequate · 2 between · 1 weak.
+   Speaking /25 decides: 22-25 above (test next level up) · 18-21 place (no criterion below 3)
+   · 14-17 borderline (the writing task decides) · 13 or less below (one level lower).
+   Writing is double-checked against the same expectations: task length, target structures,
+   coherence at the placed level. */
+const BAND_WORDS = ["", "Weak", "Between", "Adequate", "Between", "Strong"];
 const SPEAKING_RUBRIC = [
-  { c:"Range",                 d:"Vocabulary and structures for the task level" },
-  { c:"Accuracy",              d:"Control of grammar; errors do not block meaning" },
-  { c:"Fluency & coherence",   d:"Extended turns, linking, manageable hesitation" },
-  { c:"Interaction & task",    d:"Answers the question asked, develops it, responds to follow-ups" }
+  { c:"Fluency & coherence",      d:"Speaks at the length the level demands; ideas follow logically; recovers from pauses" },
+  { c:"Grammar range & accuracy", d:"Uses the level's target structures unprompted and accurately" },
+  { c:"Vocabulary",               d:"Precise level-appropriate range across work and personal topics; paraphrases" },
+  { c:"Pronunciation",            d:"Easily understood; stress and intonation support meaning" },
+  { c:"Interaction",              d:"Understands first time; handles follow-ups and unexpected questions" }
 ];
 const WRITING_RUBRIC = [
-  { c:"Task achievement",      d:"All content points covered; right length and purpose" },
-  { c:"Organisation & cohesion", d:"Logical order, paragraphing, linking devices" },
-  { c:"Range",                 d:"Business vocabulary and structures for the level" },
-  { c:"Accuracy & register",   d:"Grammar, spelling, appropriate business tone" }
+  { c:"Task & length",            d:"Covers the topic in the word range set for the level" },
+  { c:"Target structures",        d:"Uses the level's grammar focus accurately" },
+  { c:"Coherence",                d:"Ideas organised and linked; clear for the reader" },
+  { c:"Vocabulary & register",    d:"Range and tone appropriate to the level and to business" }
 ];
+const DECISION = {
+  speaking: { above:[22,25], place:[18,21], borderline:[14,17], below:[0,13], minCriterionToPlace:3, max:25 },
+  writing:  { above:[18,20], confirm:[12,17], below:[0,11], max:20 }
+};
 
 /* ---------- listening helpers ---------- */
 const L = (who, text) => ({ who, text });   // who: NARR | M | W | M2 | W2
@@ -102,17 +109,8 @@ const BANK = {
           script:[L("W","When is the product presentation?"),L("M","It's on Thursday. At two thirty.")] }
       ]
     },
-    writing: {
-      task:"An email to your new team", words:[25,40],
-      source:"Business Writing Club Elementary S1 (introducing yourself in an email); Elementary syllabus S1–S2",
-      instruction:"You have a new job. Write a short email to the people in your new team.",
-      points:["Say hello.","Write your name and your job.","Write the name of your company and what it does.","Say goodbye."],
-      starter:"Hello everyone,\nMy name is ______. I am a ______."
-    },
-    speaking: {
-      source:"criteria of Speaking Placement Test - Elementary questions (7 verbatim) + 3 written for A1 (28 Sep 2026). The three A2 prompts that were here (past simple, present continuous, going to) moved to Tier 2.",
-      prompts:["What's your name?","Which country are you from? Where are you from?","What's your job?","What does your company produce or provide?","What time do you start work? Tell me about your typical day.","What do you do in your free time?","Tell me about your family, your home or your interests.","Where do you work? Tell me about your office.","Who do you work with? Who is your manager?","How do you travel to work?"]
-    }
+    writing: {"task": "Write about yourself", "words": [40, 60], "minutes": 15, "focus": "Present simple, basic communication", "source": "Business Result Oral & Writing Placement Test - writing task topic (PDF)", "instruction": "Write about yourself: your name, where you are from, your job, and your company. Use simple present tense (40-60 words).", "points": ["Your name and where you are from.", "Your job.", "Your company: its name and what it does."], "starter": "My name is ______. I am from ______."},
+    speaking: {"source": "Business Result Oral & Writing Placement Test (Academic Team PDF, applied 10 Oct 2026)", "grammar": ["Present simple: I work / She lives", "Subject pronouns & possessive adjectives", "Spelling aloud: names, companies, emails", "Countries, nationalities, jobs vocabulary", "Numbers, prices, phone numbers"], "sets": [{"title": "Basic Information", "qs": ["What is your name? Can you spell it, please?", "Where are you from?", "What is your job?", "Where do you work?", "Do you like your job? Why or why not?"]}, {"title": "Describing Company", "qs": ["Describe what your company does.", "How many people work in your company?", "What products or services do you offer?", "Is your company in the city or outside?"]}, {"title": "Personal Details", "qs": ["Do you have children?", "What languages do you speak?", "What is your email address?", "What are your hobbies?"]}], "prompts": ["What is your name? Can you spell it, please?", "Describe what your company does.", "Do you have children?", "Where are you from?", "How many people work in your company?", "What languages do you speak?", "What is your job?", "What products or services do you offer?", "What is your email address?", "Where do you work?", "Is your company in the city or outside?", "What are your hobbies?", "Do you like your job? Why or why not?"], "readAloud": ["Please read the first two paragraphs of the text on your screen aloud.", "Where is John from, and where does he live now?", "What does John do first when he starts work?"], "passage": ["My name is John. I am thirty years old. I am from Germany, but I live in Cairo now. I work for a technology company. The company is big. It has two hundred workers. Our office is in the city centre, near a small park.", "I start work at nine o'clock in the morning. First, I drink a coffee and I read my emails. Then I talk to my team. We have a short meeting every day. It is only ten minutes. I use a computer all day. Sometimes I speak to customers on the telephone. They ask questions about our products, and I help them.", "I speak English and German. I also study Arabic on Mondays and Wednesdays. My teacher is very kind and she is very patient. Arabic is difficult for me, but I like it. I practise new words every evening.", "I have lunch at one o'clock with my friend Omar. We usually eat rice, chicken and salad. Omar is from Egypt and he works in the same office. After lunch, I write reports and I answer more emails.", "I finish work at five o'clock. I go home by bus. The bus is often full, so I stand. In the evening, I play football with my friends, or I watch a film with my family. I have one sister and two brothers. They live in Germany. I call them every Sunday.", "On Fridays and Saturdays, I do not work. I go to the park with my wife and my daughter. My daughter is five years old. She likes ice cream and she likes to run. We are very happy here.", "I like my job very much. The people are friendly, the office is quiet, and I learn something new every week. My English is better now, and I want to speak Arabic well too."]}
   },
 
   /* ===== TIER 2 — Pre-intermediate (A2) =====
@@ -140,17 +138,8 @@ const BANK = {
           script:[L("M2","Hi, it's Sam. Sorry the report is late. I was finishing it yesterday when the system went down, so I lost the last part. I'll send it by twelve.")] }
       ]
     },
-    writing: {
-      task:"An email to book hotel rooms", words:[60,80],
-      source:"Business Writing Club Pre-intermediate S4 (hotel reservation); Pre-int syllabus U7 Travel",
-      instruction:"Your manager and two colleagues are going to a business event next month. Write an email to a hotel to book rooms for them.",
-      points:["Say who you are and why you are writing.","Give the dates and the number of rooms.","Ask about the price and what the hotel has (for example, Wi-Fi or breakfast).","Ask the hotel to answer, and end your email."],
-      starter:"Dear Sir or Madam,\nI would like to book ______"
-    },
-    speaking: {
-      source:"A2 set (28 Sep 2026): the two prompts named in the A2 descriptor (educational background, present or most recent job), the three A2 prompts moved down from Tier 1, and three written for A2. The B1-pitched prompts that were here moved up to Tier 3.",
-      prompts:["Tell me about your educational background.","Describe your current or most recent job.","When did you join the company? How did you get the job?","What project are you working on at the moment?","When is your next holiday? Where are you going to go?","What are your main responsibilities?","Tell me about the people in your team.","What did you do at work last week?"]
-    }
+    writing: {"task": "A past job or experience", "words": [60, 80], "minutes": 15, "focus": "Past simple, comparatives", "source": "Business Result Oral & Writing Placement Test - writing task topic (PDF)", "instruction": "Describe a past job or experience. Use past simple and comparatives to explain how it was different from now (60-80 words).", "points": ["What the job or experience was, and when.", "What you did there.", "How it was different from now (use comparatives: bigger, better, more interesting...)."], "starter": "Two years ago, I ______"},
+    speaking: {"source": "Business Result Oral & Writing Placement Test (Academic Team PDF, applied 10 Oct 2026)", "grammar": ["Past simple: regular & irregular verbs", "Time expressions: last year, ago, in 2019", "Comparative adjectives: bigger, more expensive, better", "There is / There are", "Present continuous vs present simple"], "sets": [{"title": "Past Experience", "qs": ["Tell me about your previous job. What did you do?", "How long did you work there?", "Was it different from your current role? How?", "What did you like about your old job?", "Why did you change jobs?"]}, {"title": "Company Description", "qs": ["How many employees are in your department?", "Describe your workplace. What is there?", "Is your company bigger or smaller than before?", "What changed in your company recently?"]}, {"title": "Current Responsibilities", "qs": ["What are you doing at work this week?", "Who do you work with?", "What are your main responsibilities?"]}], "prompts": ["Tell me about your previous job. What did you do?", "How many employees are in your department?", "What are you doing at work this week?", "How long did you work there?", "Describe your workplace. What is there?", "Who do you work with?", "Was it different from your current role? How?", "Is your company bigger or smaller than before?", "What are your main responsibilities?", "What did you like about your old job?", "What changed in your company recently?", "Why did you change jobs?"]}
   },
 
   /* ===== TIER 3 — Intermediate (B1) =====
@@ -177,17 +166,8 @@ const BANK = {
           script:[L("W","Great. Lucy, could you send our customers an email next week about the new site?"),L("W2","Sure. But I'll wait until we have a confirmed date before I send it.")] }
       ]
     },
-    writing: {
-      task:"Proposal email: improving workplace facilities", words:[110,140],
-      source:"Business Writing Club Intermediate S5 (writing proposals); Speaking Club Int S5 (facilities & perks); Int syllabus U10 Facilities",
-      instruction:"Staff turnover in your department has increased and your manager has asked for ideas. Write a formal email proposing improvements to workplace facilities or employee benefits.",
-      points:["Explain the current problem and its effect.","Propose two improvements (for example, collaborative spaces, recognition programmes, flexible hours).","Explain the results you expect, linking your ideas (therefore, as a result, however).","Make a clear recommendation and close formally."],
-      starter:"Dear ______,\nI am writing to propose ______"
-    },
-    speaking: {
-      source:"B1 set (28 Sep 2026): the B1-pitched prompts moved down from Tier 2 - they match the B1 descriptor (experiences and events, dreams, hopes and ambitions, a book or film, reasons) - plus one written for B1.",
-      prompts:["What are your dreams and ambitions for the future?","Describe a memorable experience from your past.","Tell me about a book or film you enjoyed recently.","What are your hopes for your career?","Why did you choose your current field of work?","Describe a problem you had at work and how you dealt with it."]
-    }
+    writing: {"task": "Your career journey", "words": [90, 110], "minutes": 20, "focus": "Present perfect, modals, conditionals", "source": "Business Result Oral & Writing Placement Test - writing task topic (PDF)", "instruction": "Reflect on your career journey. Write about decisions you've made, skills you've developed, and what you would do if you could start again (90-110 words).", "points": ["Important decisions you have made in your career.", "Skills you have developed.", "What you would do if you could start again."], "starter": "I have worked in ______ for ______"},
+    speaking: {"source": "Business Result Oral & Writing Placement Test (Academic Team PDF, applied 10 Oct 2026)", "grammar": ["Present perfect: have/has + past participle", "First conditional: if + present + will", "Second conditional: if + past + would", "Present perfect vs past simple", "Modal verbs: must, should, could, may"], "sets": [{"title": "Career Development", "qs": ["How long have you been in your current role?", "What have you achieved since you started?", "Have you been promoted? When?", "What skills have you developed over the years?", "If you could change one thing about your career, what would it be?"]}, {"title": "Work Scenarios", "qs": ["If your company asked you to relocate, what would you do?", "What would happen if you didn't meet your targets?", "If you got an offer from another company, how would you decide?", "What must you do to advance in your career?"]}, {"title": "Company & Market", "qs": ["How has your company changed in the last five years?", "What are the biggest challenges your industry faces?", "How do you think your sector will change in the next ten years?", "What should your company do to stay competitive?"]}], "prompts": ["How long have you been in your current role?", "If your company asked you to relocate, what would you do?", "How has your company changed in the last five years?", "What have you achieved since you started?", "What would happen if you didn't meet your targets?", "What are the biggest challenges your industry faces?", "Have you been promoted? When?", "If you got an offer from another company, how would you decide?", "How do you think your sector will change in the next ten years?", "What skills have you developed over the years?", "What must you do to advance in your career?", "What should your company do to stay competitive?", "If you could change one thing about your career, what would it be?"]}
   },
 
   /* ===== TIER 4 — Upper-intermediate (B2) =====
@@ -215,17 +195,8 @@ const BANK = {
           script:[L("W","So, I'll draft the renegotiation proposal by Friday, and you'll put together a shortlist. Then the ball is in their court. Shall we review both next Wednesday?"),L("M","Works for me.")] }
       ]
     },
-    writing: {
-      task:"Workplace conflict report", words:[160,200],
-      source:"Business Writing Club Upper-intermediate S5 (conflict report: Introduction → Background → Action taken so far → Conclusion → Recommendations); S3 (proposal language)",
-      instruction:"Two members of your team are in conflict: one feels micromanaged and the other says deadlines are being missed. Team performance is falling. Write a report for the senior management team.",
-      points:["Introduction: state the purpose of the report.","Background: describe the situation and its effect on the team.","Action taken so far: say what has already been done.","Conclusion and recommendations: propose clear next steps and justify them."],
-      starter:"Introduction\nThe purpose of this report is to ______"
-    },
-    speaking: {
-      source:"B2 set (28 Sep 2026): the criteria document's Intermediate questions, moved down from Tier 3 - they match the B2 descriptor (detailed descriptions, a viewpoint with advantages and disadvantages) - plus one written for B2.",
-      prompts:["Give a short presentation about your company. For example, its history, products and locations.","What have been some of the big changes at your company recently? What were the results, and what is your opinion of them?","How has technology changed your life in recent years, at work and at home? Do you think it's a good thing?","Remote and hybrid work: what are the advantages and disadvantages for a company like yours? Where do you stand?"]
-    }
+    writing: {"task": "A formal business analysis", "words": [120, 150], "minutes": 20, "focus": "Passive, relative clauses, complex structures", "source": "Business Result Oral & Writing Placement Test - writing task topic (PDF)", "instruction": "Write a formal business analysis. Use passive voice, relative clauses, and sophisticated linking words to discuss organizational achievements and future plans (120-150 words).", "points": ["Your organization's main achievements.", "How they were achieved (use the passive and relative clauses).", "Future plans, linked with words such as furthermore, however, as a result."], "starter": "Over the past year, our organization has ______"},
+    speaking: {"source": "Business Result Oral & Writing Placement Test (Academic Team PDF, applied 10 Oct 2026)", "grammar": ["Passive voice: present & past", "Relative clauses: defining & non-defining", "Phrasal verbs: set up, follow up, deal with, look into", "Inverted conditionals & mixed conditionals", "Advanced modals: might, could have, should have"], "sets": [{"title": "Organizational Dynamics", "qs": ["What does your company do, and who are your main clients?", "How has your organization's structure evolved?", "Describe a significant change your company has undergone.", "What is your company believed to be known for in the market?", "How are decisions typically made in your organization?"]}, {"title": "Professional Challenges", "qs": ["Tell me about a difficult situation you have had to manage.", "How would you have handled this differently five years ago?", "What could have prevented this problem?", "What are the main risks your organization currently faces?", "How are these risks being mitigated?"]}, {"title": "Strategic Thinking", "qs": ["What should your company prioritize: growth or stability?", "If you were the manager, what would you change first?", "Had your company made different decisions earlier, where would it be now?", "What opportunities do you see for expansion?"]}], "prompts": ["What does your company do, and who are your main clients?", "Tell me about a difficult situation you have had to manage.", "What should your company prioritize: growth or stability?", "How has your organization's structure evolved?", "How would you have handled this differently five years ago?", "If you were the manager, what would you change first?", "Describe a significant change your company has undergone.", "What could have prevented this problem?", "Had your company made different decisions earlier, where would it be now?", "What is your company believed to be known for in the market?", "What are the main risks your organization currently faces?", "What opportunities do you see for expansion?", "How are decisions typically made in your organization?", "How are these risks being mitigated?"]}
   },
 
   /* ===== TIER 5 — Advanced (C1) =====
@@ -251,16 +222,8 @@ const BANK = {
           script:[L("M","Final question: would you recommend the model to others?"),L("W","With a caveat. It works if you're prepared to redesign how work is done, not just where. Companies that simply send people home and carry on as before tend to get the worst of both worlds.")] }
       ]
     },
-    writing: {
-      task:"Proposal to senior management", words:[200,250],
-      instruction:"Write a proposal to your senior management team recommending ONE significant change to how your organisation works (for example: a four-day week, a new market, an AI tool, a restructure).",
-      points:["Present the change and the reason it is needed now.","Develop two or three supporting arguments with evidence or examples.","Acknowledge the main objection and respond to it.","Conclude with a clear, persuasive recommendation in an appropriate register."],
-      starter:"Proposal: ______\nPurpose"
-    },
-    speaking: {
-      source:"C1 set (28 Sep 2026): the criteria document's Upper-intermediate questions, moved down from Tier 4 - they match the C1 descriptor (complex subjects, sub-themes, evaluation) - plus two written for C1. Prompt 5 requires a register shift, the C1 marker a fluent B2 most often misses. The old 'mix and match' set is retired.",
-      prompts:["How important are teams where you work? What are some ways to motivate a team that is underperforming?","How much do you deal with people from other countries? Give examples. Do different cultures do business in different ways?","Think of a problem you had to deal with recently. What happened? How did you solve it? Could you have approached it differently?","Analyse the main trends shaping your industry over the next few years. Which will matter most, and why?","Explain a technical or specialist part of your work to me as though I know nothing about your field."]
-    }
+    writing: {"task": "A strategic position paper", "words": [150, 180], "minutes": 20, "focus": "Cleft sentences, participles, discourse markers", "source": "Business Result Oral & Writing Placement Test - writing task topic (PDF)", "instruction": "Compose a sophisticated strategic position paper examining corporate ethics, risk management, and sustainable practices. Use cleft sentences, participle clauses, and advanced discourse markers (150-180 words).", "points": ["Your position on corporate ethics.", "How risk should be managed.", "Sustainable practices you recommend, with a clear conclusion."], "starter": "What distinguishes a responsible organization is ______"},
+    speaking: {"source": "Business Result Oral & Writing Placement Test (Academic Team PDF, applied 10 Oct 2026)", "grammar": ["Cleft sentences: What...is, It was...that, It is...who", "Participle clauses: having done, being done, facing...", "Impersonal passive: It is said that, It is believed that", "Inverted conditionals: Were I to, Had they known", "Discourse markers: nevertheless, consequently, moreover, whereas"], "sets": [{"title": "Sophisticated Discussion", "qs": ["What distinguishes your organization from its competitors?", "To what extent do you think corporate social responsibility influences business strategy?", "Were you to assume a leadership position, what would be your strategic priorities?", "Having considered the current market dynamics, how might your sector evolve over the next decade?", "It is often argued that innovation demands risk-taking. To what extent do you agree?"]}, {"title": "Complex Analysis", "qs": ["Describe a time when you had to navigate conflicting priorities or ethical considerations.", "What is believed to be the greatest challenge facing your industry?", "Had your company anticipated the recent market changes, what might have been done differently?", "Critically evaluate the balance between stakeholder interests in your organization.", "How would you articulate your organization's values to a skeptical investor?"]}, {"title": "Advanced Presentation", "qs": ["Give me a short presentation, about two minutes, on a strategic initiative your company is undertaking.", "How do you reconcile short-term pressures with long-term strategic vision?", "What role does continuous learning play in your professional development?", "Discuss the implications of digital transformation for your sector."]}], "prompts": ["What distinguishes your organization from its competitors?", "Describe a time when you had to navigate conflicting priorities or ethical considerations.", "Give me a short presentation, about two minutes, on a strategic initiative your company is undertaking.", "To what extent do you think corporate social responsibility influences business strategy?", "What is believed to be the greatest challenge facing your industry?", "How do you reconcile short-term pressures with long-term strategic vision?", "Were you to assume a leadership position, what would be your strategic priorities?", "Had your company anticipated the recent market changes, what might have been done differently?", "What role does continuous learning play in your professional development?", "Having considered the current market dynamics, how might your sector evolve over the next decade?", "Critically evaluate the balance between stakeholder interests in your organization.", "Discuss the implications of digital transformation for your sector.", "It is often argued that innovation demands risk-taking. To what extent do you agree?", "How would you articulate your organization's values to a skeptical investor?"]}
   }
 };
 
@@ -298,4 +261,4 @@ const READING = [
     { lvl:"C1", src:60, question: "It's difficult to ___ what the reaction might be to this proposal.", options: ["weigh", "gauge", "measure"], correct: 1 }
 ];
 
-window.BRT = { CONFIG, TIERS, CEFR_DESCRIPTORS, BAND_WORDS, SPEAKING_RUBRIC, WRITING_RUBRIC, BANK, READING };
+window.BRT = { CONFIG, TIERS, CEFR_DESCRIPTORS, BAND_WORDS, SPEAKING_RUBRIC, WRITING_RUBRIC, DECISION, BANK, READING };

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <!-- Bump ?v= on all three files whenever any of them changes (GitHub Pages caching). -->
-<link rel="stylesheet" href="styles.css?v=2026-09-28c">
+<link rel="stylesheet" href="styles.css?v=2026-10-10-v4c">
 </head>
 <body>
 <header class="site-header">
@@ -70,7 +70,7 @@
     <ul class="facts">
      <li><span class="f-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><b>45–60 minutes</b><span>At your own pace</span></div></li>
      <li><span class="f-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h4l3-7 4 14 3-7h2"/></svg></span><div><b>Adaptive</b><span>Tasks follow your level</span></div></li>
-     <li><span class="f-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Your course</b><span>Level and CEFR result</span></div></li>
+     <li><span class="f-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Your course</b><span>Confirmed by our Academic Team</span></div></li>
     </ul>
    </div>
 
@@ -95,19 +95,19 @@
      <button type="submit" class="start-button">Start the placement test</button>
     </form>
     <div id="startError" class="error-message hidden"></div>
-    <div class="build-stamp">Business Result placement · v3 · September 2026</div>
+    <div class="build-stamp">Business Result placement · v4 · October 2026</div>
    </div>
   </div>
  </section>
 
  <!-- ============ INSTRUCTIONS ============ -->
  <section id="screen-intro" class="screen panel hidden">
-  <div class="intro-head"><h2>How the test works</h2><p class="muted">Four parts, in this order. Your examiner reviews writing and speaking and confirms your course.</p></div>
+  <div class="intro-head"><h2>How the test works</h2><p class="muted">Four parts, in this order. Our Academic Team reviews your answers and confirms your course.</p></div>
   <ol class="steps-list">
    <li><span class="n">1</span><span><strong>Reading and grammar.</strong> 30 questions, from easy to hard. Choose the correct answer; answer every question you can.</span></li>
    <li><span class="n">2</span><span><strong>Listening.</strong> One short exercise at your reading level. Press Play; you can listen three times.</span></li>
-   <li><span class="n">3</span><span><strong>Writing.</strong> One business writing task at your level. Type it, or upload a photo of your handwriting.</span></li>
-   <li><span class="n">4</span><span><strong>Speaking.</strong> A short conversation with our AI examiner. The questions adapt to your answers.</span></li>
+   <li><span class="n">3</span><span><strong>Writing.</strong> One short business writing task. Type it, or upload a photo of your handwriting.</span></li>
+   <li><span class="n">4</span><span><strong>Speaking.</strong> A short conversation (8–10 minutes) with our AI examiner. The questions adapt to your answers. If your voice does not come through clearly, you can record your answers instead.</span></li>
   </ol>
   <div class="center"><button type="button" class="start-button" id="introGo">Start reading</button></div>
  </section>
@@ -149,22 +149,16 @@
 
    <!-- ============ RECEPTIVE RESULT ============ -->
    <section id="screen-results" class="screen panel results-screen hidden">
-    <h2 class="score-message">Great work<span id="resName"></span>! Here is your result so far</h2>
-    <div class="score-grid">
-     <div class="score-tile"><div class="v" id="resReading">–</div><div class="l">Reading &amp; grammar</div></div>
-     <div class="score-tile"><div class="v" id="resListening">–</div><div class="l">Listening</div></div>
-    </div>
-    <div class="performance-badge" id="resBadge"></div>
-    <div class="level-ladder" id="resLadder"></div>
+    <h2 class="score-message">Well done<span id="resName"></span>! Reading and listening are complete.</h2>
     <div id="saveStatus"></div>
-    <p class="subtitle" style="margin:10px 0 16px">Your writing and speaking tasks have been chosen from this result.</p>
+    <p class="subtitle" style="margin:10px 0 16px">Next is a short writing task.</p>
     <button type="button" class="start-button" id="toWriting"><span>Continue to writing</span></button>
    </section>
 
    <!-- ============ WRITING (task at receptive level) ============ -->
    <section id="screen-writing" class="screen panel hidden">
-    <div class="q-head"><h2>Writing</h2><span id="writeScorePill" class="score-pill"></span></div>
-    <p class="muted" style="margin:4px 0 16px">This task was chosen for you from your reading and listening score. It is set at <strong id="writeLevel"></strong>.</p>
+    <div class="q-head"><h2>Writing</h2></div>
+    <p class="muted" style="margin:4px 0 16px">Read the task, then write your answer below. The speaking part comes next.</p>
     <div class="task-card">
      <div class="task-meta" id="writeMeta"></div>
      <h3 id="writeTask"></h3>
@@ -175,7 +169,7 @@
     <div class="write-info">
      <div><span>Length</span><b id="writeInfoLength"></b></div>
      <div><span>Suggested time</span><b id="writeInfoTime"></b></div>
-     <div><span>What counts</span><b>All the points · Clear order · Good words · Correct grammar</b></div>
+     <div><span>What counts</span><b>All the points · The right length · Clear order · Correct grammar</b></div>
     </div>
     <p class="starter"><strong>Start like this:</strong> <span id="writeStarter"></span></p>
     <textarea id="writeArea" class="write-area" aria-label="Your writing" placeholder="Write your answer here…"></textarea>
@@ -203,19 +197,16 @@
     </div>
     <h3 class="speak-sub">Questions</h3>
     <ol class="live-questions" id="liveQuestions"></ol>
+    <div id="passageBox" class="hidden"></div>
     <p class="muted" id="liveWaiting" style="margin:6px 0 16px">Your questions will appear here as the examiner asks them.</p>
 
-    <details id="fallbackBox" class="optional-fields" style="text-align:left;margin-bottom:16px">
-     <summary>Can't use the live examiner? Record your answers instead</summary>
-     <div id="fallbackQuestions"></div>
-     <div style="text-align:center;margin:12px 0">
-      <button type="button" class="record-btn" id="recordBtn">🎙️ Start Recording</button>
-      <p id="recordStatus" style="margin-top:10px;color:#666;font-weight:600"></p>
-     </div>
-     <div id="transcriptWrap" class="hidden"><div id="transcript" class="transcription-box">Waiting for speech…</div></div>
+    <details id="fallbackBox" class="optional-fields record-box" style="text-align:left;margin-bottom:16px">
+     <summary>Is your voice not clear, or is the examiner not working? Record your answers instead</summary>
+     <p class="muted" style="margin:8px 0 12px">Press <b>Record answer</b> for each question, answer aloud, then press <b>Stop</b>. You can listen and record again. Your recordings are sent for marking when you finish.</p>
+     <div id="recordList"></div>
     </details>
 
-    <button class="submit-button" id="speakDone"><span>I have finished speaking</span></button>
+    <button class="submit-button" id="speakDone"><span>Finish the test</span></button>
     <div id="speakStatus"></div>
    </section>
 
@@ -223,9 +214,9 @@
    <section id="screen-finish" class="screen panel hidden">
     <div id="candidateResult"></div>
 
-    <details class="examiner-panel no-print-summary" id="examinerPanel">
+    <details class="examiner-panel no-print-summary hidden" id="examinerPanel">
      <summary>Examiner scoring — Writing &amp; Speaking (examiner only)</summary>
-     <p class="subtitle" style="font-size:14px">Rate each criterion <strong>against the task level</strong>: 0 no evidence · 1 below level · 2 borderline · 3 secure · 4 above level. These confirm the placement: they can lower it, and raise it by at most one band.</p>
+     <p class="subtitle" style="font-size:14px">Staff view only. Score each criterion 1–5 <strong>against the level tested</strong> (5 strong · 3 adequate · 1 weak). Speaking /25: 22–25 above · 18–21 place (no criterion below 3) · 14–17 borderline, writing decides · 13 or less one level lower. The AI marks are already recorded in Excel.</p>
      <h3 id="wLevel">Writing</h3>
      <div id="writeAiNote" class="notice warn hidden"></div>
      <div class="response-box" id="writingResponse"></div>
@@ -233,16 +224,6 @@
      <h3 id="sLevel">Speaking</h3>
      <div class="response-box" id="askedBox"></div>
      <table class="rubric" id="speakRubric"></table>
-     <div id="probeWrap" class="hidden">
-      <h3>A1/A2 split probe</h3>
-      <p class="subtitle" style="font-size:14px" id="probeRule"></p>
-      <select id="probeResult" class="form-input" style="max-width:360px">
-       <option value="">— examiner decision —</option>
-       <option value="Pre-elementary">Pre-elementary (0–1 probe answers with target grammar)</option>
-       <option value="Elementary">Elementary (2–3 answered in linked sentences)</option>
-       <option value="Recheck">Recheck written attempt (all three fluent)</option>
-      </select>
-     </div>
      <div class="form-group" style="margin-top:14px"><label class="form-label" for="examinerNotes">Examiner notes</label><textarea id="examinerNotes" class="form-input" style="min-height:80px;font-family:inherit"></textarea></div>
      <button type="button" class="start-button" id="computeBtn"><span>Calculate final placement</span></button>
      <div id="reportRoot"></div>
@@ -255,7 +236,7 @@
    </section>
 
 </main>
-<script src="data/questions.js?v=2026-09-28c"></script>
-<script src="app.js?v=2026-09-28c"></script>
+<script src="data/questions.js?v=2026-10-10-v4c"></script>
+<script src="app.js?v=2026-10-10-v4c"></script>
 </body>
 </html>
