@@ -99,7 +99,7 @@
   function init() {
     $("#testDate").value = new Date().toISOString().split("T")[0];
     try { if (new URLSearchParams(location.search).get("from") === "deck") $("#backLink").classList.remove("hidden"); } catch (e) {}
-    if (TEST) $("#testBadgeSlot").innerHTML = `<span class="test-badge">TEST TRIAL — not a candidate result</span>`;
+    /* 10 Oct 2026: no visible TEST badge (Dr. Abir). ?test attempts are still labelled TEST TRIAL in Excel. */
     show(CONFIG.requirePassword ? "login" : "start");
   }
   $("#loginForm").addEventListener("submit", e => {
